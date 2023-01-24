@@ -25,6 +25,7 @@ function createWorker() {
 
 app.get("/blocking", async (req, res) => {
   const workerPromises = [];
+  let start = new Date()
   for (let i = 0; i < THREAD_COUNT; i++) {
     workerPromises.push(createWorker());
   }
@@ -34,7 +35,19 @@ app.get("/blocking", async (req, res) => {
     thread_results[1] +
     thread_results[2] +
     thread_results[3];
-  res.status(200).send(`result is ${total}`);
+  const end = new Date() - start
+  res.status(200).send(`result is ${total}, time : ${end}ms`);
+});
+
+app.get("/blocking-withoutworker", async (req, res) => {
+  let start = new Date()
+  let counter = 0;
+  for (let i = 0; i < 20_000_000_000 / workerData.thread_count; i++) {
+    counter++;
+  }
+  
+  const end = new Date() - start
+  res.status(200).send(`result is ${total}, time : ${end}ms`);
 });
 
 app.listen(port, () => {
